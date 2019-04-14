@@ -12,7 +12,8 @@ class Solution(object):
             p2 = headA if p2 == None else p2.next
         return p1
 
- # 2.参照142题 环形链表思路，将一个链表头尾相接就与142题解法一样了（但是此方法改变了链表的原有结构，但是Java解法不会改变，不知道原因）
+ # 2.参照142题 环形链表思路，将一个链表头尾相接就与142题解法一样了
+ # （但是此方法改变了链表的原有结构，需要在后面改原来结构）
 #     def __init__(self, x):
 #         self.val = x
 #         self.next = None
@@ -27,24 +28,21 @@ class Solution(object):
         last = headB
         while last.next:
             last = last.next
-        last.next = headB
+        last.next = headB    #将B链表头尾相接成环
 
-        cycle = 0
-        s = p = p2 = headA
-        while p2.next != None and p2.next.next != None:
-            p = p.next
-            p2 = p2.next.next
-            if p == p2:
-                cycle = 1
-                break
-
-        if cycle:
-            while s != p:
-                s = s.next
-                p = p.next
-            return s
-        else:
-            return None
+        slow = fast = headA
+        while fast.next != None and fast.next.next != None:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:  #快慢指针相遇点
+                slow = headA  #相遇点到入环点的距离与A头节点到入环点到距离相等
+                while slow != fast:
+                    slow = slow.next
+                    fast = fast.next
+                last.next = None  #拆掉B链表形成的环，题目要求不能改变链表结构
+                return fast
+        last.next = None #若AB不相交，也要拆环
+        return None
 
 #Java
 class Solution {
